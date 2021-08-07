@@ -1,3 +1,5 @@
+package com.example.snake;
+
 import javax.swing.JFrame;
 
 public class Application extends JFrame {
