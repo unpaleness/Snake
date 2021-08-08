@@ -1,7 +1,7 @@
 package com.example.snake;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -13,7 +13,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
 
-public class Board extends JFrame implements ActionListener {
+public class Board extends JPanel implements ActionListener {
 
     private final int BOARD_SIZE_X = 400;
     private final int BOARD_SIZE_Y = 400;
@@ -30,8 +30,8 @@ public class Board extends JFrame implements ActionListener {
     }
 
     @Override
-    public void paint(Graphics graphics) {
-        super.paint(graphics);
+    public void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
 
         graphics.drawImage(apple, appleNextCoordX, appleNextCoordY, this);
 
@@ -44,15 +44,9 @@ public class Board extends JFrame implements ActionListener {
     }
 
     private void init() {
-        setPreferredSize(new Dimension(BOARD_SIZE_X, BOARD_SIZE_Y));
-        pack();
-
-        setTitle("Snake");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
-        setLocationRelativeTo(null);
-        getContentPane().setBackground(Color.black);
+        setBackground(Color.black);
         setFocusable(true);
+        setPreferredSize(new Dimension(BOARD_SIZE_X, BOARD_SIZE_Y));
 
         addKeyListener(new TAdapter());
 
