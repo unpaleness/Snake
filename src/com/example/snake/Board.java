@@ -15,25 +15,39 @@ import java.awt.Toolkit;
 
 public class Board extends JPanel implements ActionListener {
 
-    private final int BOARD_SIZE_X = 400;
-    private final int BOARD_SIZE_Y = 400;
+    private final int CELLS_AMOUNT_X = 20;
+    private final int CELLS_AMOUNT_Y = 20;
+    private final int CELL_SIZE = 32;
     private final int DELAY = 50;
+    private final String APPLE_PATH = "src/resources/apple.png";
 
     private int appleNextCoordX = 0;
-    private int appleNextCoordY = 40;
+    private int appleNextCoordY = 0;
 
     private Image apple;
     private Timer timer;
+    private Snake snake;
 
     public Board() {
-        init();
+        setBackground(Color.black);
+        setFocusable(true);
+        setPreferredSize(new Dimension(CELLS_AMOUNT_X * CELL_SIZE, CELLS_AMOUNT_Y * CELL_SIZE));
+
+        addKeyListener(new TAdapter());
+        loadImages();
+
+        snake = new Snake(new Point2D(CELLS_AMOUNT_X / 2, CELLS_AMOUNT_Y / 2), CELL_SIZE);
+
+        timer = new Timer(DELAY, this);
+        timer.start();
     }
 
     @Override
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
 
-        graphics.drawImage(apple, appleNextCoordX, appleNextCoordY, this);
+        placeApple();
+        drawApple(graphics);
 
         Toolkit.getDefaultToolkit().sync();
     }
@@ -43,18 +57,18 @@ public class Board extends JPanel implements ActionListener {
         repaint();
     }
 
-    private void init() {
-        setBackground(Color.black);
-        setFocusable(true);
-        setPreferredSize(new Dimension(BOARD_SIZE_X, BOARD_SIZE_Y));
+    private void drawApple(Graphics graphics) {
+        graphics.drawImage(apple, appleNextCoordX, appleNextCoordY, this);
+    }
 
-        addKeyListener(new TAdapter());
+    private void placeApple() {
+        appleNextCoordX = CELL_SIZE * (int) (Math.random() * CELLS_AMOUNT_X);
+        appleNextCoordY = CELL_SIZE * (int) (Math.random() * CELLS_AMOUNT_Y);
+    }
 
-        ImageIcon imageIconApple = new ImageIcon("src/resources/apple.png");
-        apple = imageIconApple.getImage();
-
-        timer = new Timer(DELAY, this);
-        timer.start();
+    private void loadImages() {
+        ImageIcon imageIconApple = new ImageIcon(APPLE_PATH);
+        apple = imageIconApple.getImage().getScaledInstance(CELL_SIZE, CELL_SIZE, Image.SCALE_SMOOTH);
     }
 
 

@@ -1,25 +1,73 @@
 package com.example.snake;
 
-import java.awt.*;
-import javax.swing.JFrame;
+import javax.swing.*;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.util.Vector;
 
-public class Snake extends JFrame {
+public class Snake {
 
-    public Snake() {
-        setContentPane(new Board());
+    public enum Direction {
+        UP, DOWN, LEFT, RIGHT;
 
-        setResizable(false);
-        pack();
+        public Point2D nextPoint(Point2D point) {
+            return nextPointInner(point, 1);
+        }
 
-        setTitle("Snake");
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        private Point2D prevPoint(Point2D point) {
+            return nextPointInner(point, -1);
+        }
+
+        private Point2D nextPointInner(Point2D point, int sign) {
+            Point2D nextPoint = point;
+            switch (this) {
+                case UP:
+                    point.y -= sign;
+                    break;
+                case DOWN:
+                    point.y += sign;
+                    break;
+                case LEFT:
+                    point.x -= sign;
+                    break;
+                case RIGHT:
+                    point.x += sign;
+                    break;
+                default:
+                    break;
+            }
+            return nextPoint;
+        }
     }
 
-    public static void main(String[] args) {
-        EventQueue.invokeLater(() -> {
-            Snake ex = new Snake();
-            ex.setVisible(true);
-        });
+    private final int INITIAL_LENGTH = 3;
+    private final String SNAKE_HEAD_PATH = "src/resources/snake_head.png";
+    private final String SNAKE_BODY_PATH = "src/resources/snake_body.png";
+
+    private Vector<Point2D> joints;
+    private Direction direction = Direction.UP;
+    private Image imageHead;
+    private Image imageBodyJoint;
+    private int cellSize = 0;
+
+    public Snake(Point2D headPos, int newCellSize) {
+        joints.add(headPos);
+        for (int i = 1; i < INITIAL_LENGTH; ++i) {
+            joints.add(direction.nextPoint(joints.lastElement()));
+        }
+
+        cellSize = newCellSize;
+
+        imageHead = LoadImage(SNAKE_HEAD_PATH, cellSize);
+        imageBodyJoint = LoadImage(SNAKE_BODY_PATH, cellSize);
+    }
+
+    public void draw(Graphics graphics) {
+
+    }
+
+    private Image LoadImage(String path, int cellSize) {
+        ImageIcon imageIcon = new ImageIcon(path);
+        return imageIcon.getImage().getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH);
     }
 }
