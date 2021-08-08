@@ -49,11 +49,15 @@ public class Board extends JPanel implements ActionListener {
         placeApple();
         drawApple(graphics);
 
+        snake.draw(graphics, this);
+
         Toolkit.getDefaultToolkit().sync();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        snake.tryMove();
+
         repaint();
     }
 
@@ -79,12 +83,16 @@ public class Board extends JPanel implements ActionListener {
             int keyCode = e.getKeyCode();
             switch (keyCode) {
                 case KeyEvent.VK_UP:
-                    appleNextCoordX = 200;
-                    appleNextCoordY = 100;
+                    snake.setDirection(Direction.UP);
                     break;
                 case KeyEvent.VK_DOWN:
-                    appleNextCoordX = 100;
-                    appleNextCoordY = 200;
+                    snake.setDirection(Direction.DOWN);
+                    break;
+                case KeyEvent.VK_LEFT:
+                    snake.setDirection(Direction.LEFT);
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    snake.setDirection(Direction.RIGHT);
                     break;
                 default:
                     break;

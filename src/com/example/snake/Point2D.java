@@ -8,4 +8,12 @@ public class Point2D {
         x = newX;
         y = newY;
     }
+
+    public Point2D clone() {
+        return new Point2D(x, y);
+    }
+
+    public String toString() {
+        return String.format("x: %d, y: %d", x, y);
+    }
 }
