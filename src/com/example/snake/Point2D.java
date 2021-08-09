@@ -13,6 +13,10 @@ public class Point2D {
         return new Point2D(x, y);
     }
 
+    public boolean equals(Point2D other) {
+        return x == other.x && y == other.y;
+    }
+
     public String toString() {
         return String.format("x: %d, y: %d", x, y);
     }

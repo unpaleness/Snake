@@ -25,8 +25,6 @@ public class Snake {
             joints.add(direction.nextPoint(joints.lastElement()));
         }
 
-        joints.forEach(System.out::println);
-
         cellSize = newCellSize;
 
         imageHead = LoadImage(SNAKE_HEAD_PATH, cellSize);
@@ -47,16 +45,37 @@ public class Snake {
         direction = newDirection;
     }
 
-    public boolean tryMove() {
-        for (int i = 0; i < joints.size() - 1; ++i) {
-            joints.set(i, joints.get(i + 1));
+    public boolean tryMove(Point2D boardSize, Point2D applePos) {
+        Point2D nextHeadPos = direction.nextPoint(joints.lastElement());
+
+        if (!isInBoard(nextHeadPos, boardSize) || joints.contains(nextHeadPos)) {
+            return false;
         }
-        joints.set(joints.size() - 1, direction.nextPoint(joints.lastElement()));
+
+        if (nextHeadPos.equals(applePos)) {
+            joints.add(nextHeadPos);
+        } else {
+            for (int i = 0; i < joints.size() - 1; ++i) {
+                joints.set(i, joints.get(i + 1));
+            }
+            joints.set(joints.size() - 1, nextHeadPos);
+        }
         return true;
+    }
+
+    public Point2D getHeadPos() {
+        return joints.lastElement();
     }
 
     private Image LoadImage(String path, int cellSize) {
         ImageIcon imageIcon = new ImageIcon(path);
         return imageIcon.getImage().getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH);
+    }
+
+    private boolean isInBoard(Point2D point, Point2D boardSize) {
+        if (point.x < 0 || point.x >= boardSize.x || point.y < 0 || point.y >= boardSize.y) {
+            return false;
+        }
+        return true;
     }
 }

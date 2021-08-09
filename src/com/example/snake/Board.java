@@ -15,59 +15,82 @@ import java.awt.Toolkit;
 
 public class Board extends JPanel implements ActionListener {
 
-    private final int CELLS_AMOUNT_X = 20;
-    private final int CELLS_AMOUNT_Y = 20;
+    private final Point2D cellsAmount = new Point2D(20, 20);
     private final int CELL_SIZE = 32;
-    private final int DELAY = 50;
+    private final int DELAY = 100;
     private final String APPLE_PATH = "src/resources/apple.png";
 
-    private int appleNextCoordX = 0;
-    private int appleNextCoordY = 0;
+    private Point2D applePos = new Point2D(0, 0);
 
     private Image apple;
     private Timer timer;
     private Snake snake;
+    private GameState gameState = GameState.PRE_BATTLE;
 
     public Board() {
         setBackground(Color.black);
         setFocusable(true);
-        setPreferredSize(new Dimension(CELLS_AMOUNT_X * CELL_SIZE, CELLS_AMOUNT_Y * CELL_SIZE));
+        setPreferredSize(new Dimension(cellsAmount.x * CELL_SIZE, cellsAmount.y * CELL_SIZE));
 
         addKeyListener(new TAdapter());
         loadImages();
 
-        snake = new Snake(new Point2D(CELLS_AMOUNT_X / 2, CELLS_AMOUNT_Y / 2), CELL_SIZE);
+        snake = new Snake(new Point2D(cellsAmount.x / 2, cellsAmount.y / 2), CELL_SIZE);
+        placeApple();
 
         timer = new Timer(DELAY, this);
         timer.start();
+
+        gameState = GameState.IN_PROGRESS;
     }
 
     @Override
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
 
-        placeApple();
         drawApple(graphics);
 
         snake.draw(graphics, this);
+
+        if (gameState == GameState.POST_BATTLE) {
+            graphics.setColor(Color.white);
+            graphics.drawString("Game Over", cellsAmount.x * CELL_SIZE / 2, cellsAmount.y * CELL_SIZE / 2);
+        }
 
         Toolkit.getDefaultToolkit().sync();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        snake.tryMove();
+        switch (gameState) {
+            case PRE_BATTLE:
+                break;
+            case IN_PROGRESS:
+                if (!snake.tryMove(cellsAmount, applePos)) {
+                    gameState = GameState.POST_BATTLE;
+                }
 
-        repaint();
+                if (applePos.equals(snake.getHeadPos())) {
+                    placeApple();
+                }
+
+                repaint();
+
+                break;
+            case POST_BATTLE:
+                break;
+            default:
+                break;
+        }
     }
 
     private void drawApple(Graphics graphics) {
-        graphics.drawImage(apple, appleNextCoordX, appleNextCoordY, this);
+        graphics.drawImage(apple, applePos.x * CELL_SIZE, applePos.y * CELL_SIZE, this);
     }
 
     private void placeApple() {
-        appleNextCoordX = CELL_SIZE * (int) (Math.random() * CELLS_AMOUNT_X);
-        appleNextCoordY = CELL_SIZE * (int) (Math.random() * CELLS_AMOUNT_Y);
+        applePos.x = (int) (Math.random() * cellsAmount.x);
+        applePos.y = (int) (Math.random() * cellsAmount.y);
     }
 
     private void loadImages() {

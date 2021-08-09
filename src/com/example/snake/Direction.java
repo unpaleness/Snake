@@ -18,27 +18,19 @@ public enum Direction {
     }
 
     public Point2D nextPoint(Point2D point) {
-        return nextPointInner(point, 1);
-    }
-
-    private Point2D prevPoint(Point2D point) {
-        return nextPointInner(point, -1);
-    }
-
-    private Point2D nextPointInner(Point2D point, int sign) {
         Point2D nextPoint = point.clone();
         switch (this) {
             case UP:
-                nextPoint.y -= sign;
+                --nextPoint.y;
                 break;
             case DOWN:
-                nextPoint.y += sign;
+                ++nextPoint.y;
                 break;
             case LEFT:
-                nextPoint.x -= sign;
+                --nextPoint.x;
                 break;
             case RIGHT:
-                nextPoint.x += sign;
+                ++nextPoint.x;
                 break;
             default:
                 break;
