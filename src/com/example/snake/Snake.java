@@ -8,12 +8,13 @@ import java.util.Vector;
 
 public class Snake {
 
-    private final int INITIAL_LENGTH = 3;
+    private final int INITIAL_LENGTH = 6;
     private final String SNAKE_HEAD_PATH = "src/resources/snake_head.png";
     private final String SNAKE_BODY_PATH = "src/resources/snake_body.png";
 
     private Vector<Point2D> joints;
     private Direction direction = Direction.UP;
+    private Direction nextDirection = Direction.UP;
     private Image imageHead;
     private Image imageBodyJoint;
     private int cellSize = 0;
@@ -42,11 +43,14 @@ public class Snake {
         if (direction == newDirection.getOpposite()) {
             return;
         }
-        direction = newDirection;
+        nextDirection = newDirection;
     }
 
     public boolean tryMove(Point2D boardSize, Point2D applePos) {
-        Point2D nextHeadPos = direction.nextPoint(joints.lastElement());
+        Point2D nextHeadPos = nextDirection.nextPoint(joints.lastElement());
+        direction = nextDirection;
+        System.out.println(nextHeadPos);
+        System.out.println(joints);
 
         if (!isInBoard(nextHeadPos, boardSize) || joints.contains(nextHeadPos)) {
             return false;
