@@ -16,11 +16,13 @@ public class Board extends JPanel implements ActionListener {
     private final Point2D cellsAmount = new Point2D(20, 20);
     private final int CELL_SIZE = 32;
     private final int DELAY = 100;
+    private final int PREPARE_TIME_MS = 3000;
 
     private Timer timer;
     private Snake snake;
     private Apple apple;
-    private GameState gameState;
+    private GameState gameState = GameState.IN_MENU;
+    private int timeToStartMS;
 
     public Board() {
         setBackground(Color.black);
@@ -32,7 +34,7 @@ public class Board extends JPanel implements ActionListener {
         timer = new Timer(DELAY, this);
         timer.start();
 
-        startMatch();
+        prepareForMatch();
     }
 
     @Override
@@ -42,7 +44,13 @@ public class Board extends JPanel implements ActionListener {
         snake.draw(graphics, this);
         apple.draw(graphics, this);
 
-        if (gameState == GameState.POST_BATTLE) {
+        if (gameState == GameState.PRE_MATCH) {
+            graphics.setColor(Color.white);
+            graphics.drawString(String.valueOf((int) Math.ceil((float) timeToStartMS / 1000)),
+                             cellsAmount.x * CELL_SIZE / 2, cellsAmount.y * CELL_SIZE / 2);
+        }
+
+        if (gameState == GameState.POST_MATCH) {
             graphics.setColor(Color.white);
             graphics.drawString("Game Over, press R to restart", cellsAmount.x * CELL_SIZE / 2, cellsAmount.y * CELL_SIZE / 2);
         }
@@ -52,34 +60,38 @@ public class Board extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        System.out.println(timeToStartMS);
         switch (gameState) {
-            case PRE_BATTLE:
+            case PRE_MATCH:
+                repaint();
+                timeToStartMS -= DELAY;
+                if (timeToStartMS <= 0) {
+                    gameState = GameState.IN_PROGRESS;
+                }
                 break;
             case IN_PROGRESS:
                 if (!snake.tryMove(cellsAmount, apple.getLocation())) {
-                    gameState = GameState.POST_BATTLE;
+                    gameState = GameState.POST_MATCH;
                 }
-
                 if (apple.getLocation().equals(snake.getHeadPos())) {
                     apple.replace();
                 }
-
                 repaint();
-
                 break;
-            case POST_BATTLE:
+            case POST_MATCH:
                 break;
             default:
                 break;
         }
     }
 
-    private void startMatch() {
+    private void prepareForMatch() {
+        timeToStartMS = PREPARE_TIME_MS;
+
+        gameState = GameState.PRE_MATCH;
+
         snake = new Snake(new Point2D(cellsAmount.x / 2, cellsAmount.y / 2), CELL_SIZE);
         apple = new Apple(cellsAmount, CELL_SIZE);
-
-        gameState = GameState.IN_PROGRESS;
-
     }
 
     private class TAdapter extends KeyAdapter {
@@ -101,8 +113,8 @@ public class Board extends JPanel implements ActionListener {
                     snake.setDirection(Direction.RIGHT);
                     break;
                 case KeyEvent.VK_R:
-                    if (gameState == GameState.POST_BATTLE) {
-                        startMatch();
+                    if (gameState == GameState.POST_MATCH) {
+                        prepareForMatch();
                     }
                     break;
                 default:
