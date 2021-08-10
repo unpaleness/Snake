@@ -29,13 +29,10 @@ public class Board extends JPanel implements ActionListener {
 
         addKeyListener(new TAdapter());
 
-        snake = new Snake(new Point2D(cellsAmount.x / 2, cellsAmount.y / 2), CELL_SIZE);
-        apple = new Apple(cellsAmount, CELL_SIZE);
-
         timer = new Timer(DELAY, this);
         timer.start();
 
-        gameState = GameState.IN_PROGRESS;
+        startMatch();
     }
 
     @Override
@@ -47,7 +44,7 @@ public class Board extends JPanel implements ActionListener {
 
         if (gameState == GameState.POST_BATTLE) {
             graphics.setColor(Color.white);
-            graphics.drawString("Game Over", cellsAmount.x * CELL_SIZE / 2, cellsAmount.y * CELL_SIZE / 2);
+            graphics.drawString("Game Over, press R to restart", cellsAmount.x * CELL_SIZE / 2, cellsAmount.y * CELL_SIZE / 2);
         }
 
         Toolkit.getDefaultToolkit().sync();
@@ -77,6 +74,14 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
+    private void startMatch() {
+        snake = new Snake(new Point2D(cellsAmount.x / 2, cellsAmount.y / 2), CELL_SIZE);
+        apple = new Apple(cellsAmount, CELL_SIZE);
+
+        gameState = GameState.IN_PROGRESS;
+
+    }
+
     private class TAdapter extends KeyAdapter {
 
         @Override
@@ -94,6 +99,11 @@ public class Board extends JPanel implements ActionListener {
                     break;
                 case KeyEvent.VK_RIGHT:
                     snake.setDirection(Direction.RIGHT);
+                    break;
+                case KeyEvent.VK_R:
+                    if (gameState == GameState.POST_BATTLE) {
+                        startMatch();
+                    }
                     break;
                 default:
                     break;
