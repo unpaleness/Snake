@@ -1,6 +1,6 @@
 package com.example.snake;
 
-import java.awt.*;
+import java.awt.EventQueue;
 import javax.swing.JFrame;
 
 public class Application extends JFrame {

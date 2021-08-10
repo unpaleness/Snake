@@ -28,9 +28,4 @@ public class Point2D implements Cloneable {
 
         return x == otherPoint2D.x && y == otherPoint2D.y;
     }
-
-    @Override
-    public String toString() {
-        return String.format("x: %d, y: %d", x, y);
-    }
 }

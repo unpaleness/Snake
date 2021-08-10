@@ -1,6 +1,5 @@
 package com.example.snake;
 
-import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.awt.Color;
@@ -10,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Toolkit;
 
 public class Board extends JPanel implements ActionListener {
@@ -18,14 +16,11 @@ public class Board extends JPanel implements ActionListener {
     private final Point2D cellsAmount = new Point2D(20, 20);
     private final int CELL_SIZE = 32;
     private final int DELAY = 100;
-    private final String APPLE_PATH = "src/resources/apple.png";
 
-    private Point2D applePos = new Point2D(0, 0);
-
-    private Image apple;
     private Timer timer;
     private Snake snake;
-    private GameState gameState = GameState.PRE_BATTLE;
+    private Apple apple;
+    private GameState gameState;
 
     public Board() {
         setBackground(Color.black);
@@ -33,10 +28,9 @@ public class Board extends JPanel implements ActionListener {
         setPreferredSize(new Dimension(cellsAmount.x * CELL_SIZE, cellsAmount.y * CELL_SIZE));
 
         addKeyListener(new TAdapter());
-        loadImages();
 
         snake = new Snake(new Point2D(cellsAmount.x / 2, cellsAmount.y / 2), CELL_SIZE);
-        placeApple();
+        apple = new Apple(cellsAmount, CELL_SIZE);
 
         timer = new Timer(DELAY, this);
         timer.start();
@@ -48,9 +42,8 @@ public class Board extends JPanel implements ActionListener {
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
 
-        drawApple(graphics);
-
         snake.draw(graphics, this);
+        apple.draw(graphics, this);
 
         if (gameState == GameState.POST_BATTLE) {
             graphics.setColor(Color.white);
@@ -66,12 +59,12 @@ public class Board extends JPanel implements ActionListener {
             case PRE_BATTLE:
                 break;
             case IN_PROGRESS:
-                if (!snake.tryMove(cellsAmount, applePos)) {
+                if (!snake.tryMove(cellsAmount, apple.getLocation())) {
                     gameState = GameState.POST_BATTLE;
                 }
 
-                if (applePos.equals(snake.getHeadPos())) {
-                    placeApple();
+                if (apple.getLocation().equals(snake.getHeadPos())) {
+                    apple.replace();
                 }
 
                 repaint();
@@ -83,21 +76,6 @@ public class Board extends JPanel implements ActionListener {
                 break;
         }
     }
-
-    private void drawApple(Graphics graphics) {
-        graphics.drawImage(apple, applePos.x * CELL_SIZE, applePos.y * CELL_SIZE, this);
-    }
-
-    private void placeApple() {
-        applePos.x = (int) (Math.random() * cellsAmount.x);
-        applePos.y = (int) (Math.random() * cellsAmount.y);
-    }
-
-    private void loadImages() {
-        ImageIcon imageIconApple = new ImageIcon(APPLE_PATH);
-        apple = imageIconApple.getImage().getScaledInstance(CELL_SIZE, CELL_SIZE, Image.SCALE_SMOOTH);
-    }
-
 
     private class TAdapter extends KeyAdapter {
 

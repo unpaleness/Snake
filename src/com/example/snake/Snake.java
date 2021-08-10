@@ -1,14 +1,13 @@
 package com.example.snake;
 
 import javax.swing.JPanel;
-import javax.swing.ImageIcon;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.util.Vector;
 
-public class Snake {
+public class Snake extends Actor {
 
-    private final int INITIAL_LENGTH = 6;
+    private final int INITIAL_LENGTH = 3;
     private final String SNAKE_HEAD_PATH = "src/resources/snake_head.png";
     private final String SNAKE_BODY_PATH = "src/resources/snake_body.png";
 
@@ -49,8 +48,6 @@ public class Snake {
     public boolean tryMove(Point2D boardSize, Point2D applePos) {
         Point2D nextHeadPos = nextDirection.nextPoint(joints.lastElement());
         direction = nextDirection;
-        System.out.println(nextHeadPos);
-        System.out.println(joints);
 
         if (!isInBoard(nextHeadPos, boardSize) || joints.contains(nextHeadPos)) {
             return false;
@@ -69,11 +66,6 @@ public class Snake {
 
     public Point2D getHeadPos() {
         return joints.lastElement();
-    }
-
-    private Image LoadImage(String path, int cellSize) {
-        ImageIcon imageIcon = new ImageIcon(path);
-        return imageIcon.getImage().getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH);
     }
 
     private boolean isInBoard(Point2D point, Point2D boardSize) {
