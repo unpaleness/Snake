@@ -15,14 +15,17 @@ public class Board extends JPanel implements ActionListener {
 
     private final Point2D cellsAmount = new Point2D(20, 20);
     private final int CELL_SIZE = 32;
-    private final int DELAY = 100;
+    private final int TICK_MS = 25;
     private final int PREPARE_TIME_MS = 3000;
+    private final long SNAKE_STEP_MS = 100;
 
     private Timer timer;
     private Snake snake;
     private Apple apple;
     private GameState gameState = GameState.IN_MENU;
-    private int timeToStartMS;
+    private long prepareMatchTimestamp;
+    private long previousTickTimestamp;
+    private long previousSnakeStepTimestamp;
 
     public Board() {
         setBackground(Color.black);
@@ -31,8 +34,10 @@ public class Board extends JPanel implements ActionListener {
 
         addKeyListener(new TAdapter());
 
-        timer = new Timer(DELAY, this);
+        timer = new Timer(TICK_MS, this);
         timer.start();
+        previousTickTimestamp = System.currentTimeMillis();
+        previousSnakeStepTimestamp = System.currentTimeMillis();
 
         prepareForMatch();
     }
@@ -46,7 +51,8 @@ public class Board extends JPanel implements ActionListener {
 
         if (gameState == GameState.PRE_MATCH) {
             graphics.setColor(Color.white);
-            graphics.drawString(String.valueOf((int) Math.ceil((float) timeToStartMS / 1000)),
+            long timeToMatchStartMS = prepareMatchTimestamp + PREPARE_TIME_MS - System.currentTimeMillis();
+            graphics.drawString(String.valueOf((int) Math.ceil((float) timeToMatchStartMS / 1000)),
                              cellsAmount.x * CELL_SIZE / 2, cellsAmount.y * CELL_SIZE / 2);
         }
 
@@ -60,33 +66,35 @@ public class Board extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        System.out.println(timeToStartMS);
+        long currentTimestamp = System.currentTimeMillis();
         switch (gameState) {
             case PRE_MATCH:
-                repaint();
-                timeToStartMS -= DELAY;
-                if (timeToStartMS <= 0) {
+                if (currentTimestamp - prepareMatchTimestamp >= PREPARE_TIME_MS) {
                     gameState = GameState.IN_PROGRESS;
                 }
                 break;
             case IN_PROGRESS:
-                if (!snake.tryMove(cellsAmount, apple.getLocation())) {
-                    gameState = GameState.POST_MATCH;
+                if (currentTimestamp - previousSnakeStepTimestamp >= SNAKE_STEP_MS) {
+                    if (!snake.tryMove(cellsAmount, apple.getLocation())) {
+                        gameState = GameState.POST_MATCH;
+                    }
+                    if (apple.getLocation().equals(snake.getHeadPos())) {
+                        apple.replace();
+                    }
+                    previousSnakeStepTimestamp = currentTimestamp;
                 }
-                if (apple.getLocation().equals(snake.getHeadPos())) {
-                    apple.replace();
-                }
-                repaint();
                 break;
             case POST_MATCH:
                 break;
             default:
                 break;
         }
+        repaint();
+        previousTickTimestamp = currentTimestamp;
     }
 
     private void prepareForMatch() {
-        timeToStartMS = PREPARE_TIME_MS;
+        prepareMatchTimestamp = System.currentTimeMillis();
 
         gameState = GameState.PRE_MATCH;
 
