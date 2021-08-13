@@ -18,13 +18,19 @@ public class Apple extends Actor {
         cellSize = newCellSize;
 
         image = LoadImage(APPLE_PATH, cellSize);
-
-        replace();
     }
 
-    public void replace() {
-        location.x = (int) (Math.random() * cellsAmount.x);
-        location.y = (int) (Math.random() * cellsAmount.y);
+    public boolean replace(Snake snake) {
+        if (snake.getLength() >= cellsAmount.x * cellsAmount.y) {
+            return false;
+        }
+        Point2D newLocation = new Point2D();
+        do {
+            newLocation.x = (int) (Math.random() * cellsAmount.x);
+            newLocation.y = (int) (Math.random() * cellsAmount.y);
+        } while (snake.isOnPoint(newLocation));
+        location = newLocation;
+        return true;
     }
 
     public Point2D getLocation() {

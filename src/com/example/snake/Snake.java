@@ -68,6 +68,12 @@ public class Snake extends Actor {
         return joints.lastElement();
     }
 
+    public int getLength() { return joints.size(); }
+
+    public boolean isOnPoint(Point2D point) {
+        return joints.contains(point);
+    }
+
     private boolean isInBoard(Point2D point, Point2D boardSize) {
         if (point.x < 0 || point.x >= boardSize.x || point.y < 0 || point.y >= boardSize.y) {
             return false;
