@@ -13,13 +13,13 @@ import java.awt.Toolkit;
 
 public class Board extends JPanel implements ActionListener {
 
-    private final Point2D cellsAmount = new Point2D(10, 10);
-    private final int CELL_SIZE = 64;
-    private final int TICK_MS = 20;
-    private final int PREPARE_TIME_MS = 3000;
-    private final long SNAKE_STEP_MS = 200;
+    static private final Point2D cellsAmount = new Point2D(10, 10);
+    static private final int CELL_SIZE = 64;
+    static private final int TICK_MS = 20;
+    static private final int PREPARE_TIME_MS = 3000;
+    static private final long SNAKE_STEP_MS = 200;
 
-    private Timer timer;
+    private final Timer timer;
     private Snake snake;
     private Apple apple;
     private GameState gameState = GameState.IN_MENU;
@@ -35,7 +35,6 @@ public class Board extends JPanel implements ActionListener {
 
         timer = new Timer(TICK_MS, this);
         timer.start();
-        previousSnakeStepTimestamp = System.currentTimeMillis();
 
         prepareForMatch();
     }
@@ -94,6 +93,7 @@ public class Board extends JPanel implements ActionListener {
 
     private void prepareForMatch() {
         prepareMatchTimestamp = System.currentTimeMillis();
+        previousSnakeStepTimestamp = System.currentTimeMillis();
 
         gameState = GameState.PRE_MATCH;
 

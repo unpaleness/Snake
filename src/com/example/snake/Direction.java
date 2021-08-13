@@ -18,7 +18,7 @@ public enum Direction {
     }
 
     public Point2D nextPoint(Point2D point) {
-        Point2D nextPoint = point.clone();
+        Point2D nextPoint = (Point2D) point.clone();
         switch (this) {
             case UP:
                 --nextPoint.y;

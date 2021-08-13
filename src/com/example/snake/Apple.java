@@ -6,12 +6,12 @@ import java.awt.Image;
 
 public class Apple extends Actor {
 
-    private final String APPLE_PATH = "src/resources/apple.png";
+    static private final String APPLE_PATH = "src/resources/apple.png";
 
     private Point2D location = new Point2D(0, 0);
-    private Point2D cellsAmount;
-    private Image image;
-    private int cellSize;
+    private final Point2D cellsAmount;
+    private final Image image;
+    private final int cellSize;
 
     public Apple(Point2D newCellsAmount, int newCellSize) {
         cellsAmount = newCellsAmount;

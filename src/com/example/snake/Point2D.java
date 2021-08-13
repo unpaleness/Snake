@@ -12,7 +12,7 @@ public class Point2D implements Cloneable {
     }
 
     @Override
-    public Point2D clone() {
+    protected Point2D clone() {
         return new Point2D(x, y);
     }
 
@@ -22,11 +22,9 @@ public class Point2D implements Cloneable {
             return true;
         }
 
-        if (!(other instanceof Point2D)) {
+        if (!(other instanceof Point2D otherPoint2D)) {
             return false;
         }
-
-        Point2D otherPoint2D = (Point2D) other;
 
         return x == otherPoint2D.x && y == otherPoint2D.y;
     }

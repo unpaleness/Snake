@@ -7,19 +7,19 @@ import java.util.Vector;
 
 public class Snake extends Actor {
 
-    private final int INITIAL_LENGTH = 3;
-    private final String SNAKE_HEAD_PATH = "src/resources/snake_head.png";
-    private final String SNAKE_BODY_PATH = "src/resources/snake_body.png";
+    static private final int INITIAL_LENGTH = 3;
+    static private final String SNAKE_HEAD_PATH = "src/resources/snake_head.png";
+    static private final String SNAKE_BODY_PATH = "src/resources/snake_body.png";
 
-    private Vector<Point2D> joints;
+    private final Vector<Point2D> joints;
     private Direction direction = Direction.UP;
     private Direction nextDirection = Direction.UP;
-    private Image imageHead;
-    private Image imageBodyJoint;
-    private int cellSize = 0;
+    private final Image imageHead;
+    private final Image imageBodyJoint;
+    private final int cellSize;
 
     public Snake(Point2D headPos, int newCellSize) {
-        joints = new Vector<Point2D>();
+        joints = new Vector<>();
         joints.add(headPos);
         for (int i = 1; i < INITIAL_LENGTH; ++i) {
             joints.add(direction.nextPoint(joints.lastElement()));
@@ -49,7 +49,8 @@ public class Snake extends Actor {
         Point2D nextHeadPos = nextDirection.nextPoint(joints.lastElement());
         direction = nextDirection;
 
-        if (!isInBoard(nextHeadPos, boardSize) || joints.contains(nextHeadPos)) {
+        if (!isInBoard(nextHeadPos, boardSize) ||
+                (joints.contains(nextHeadPos) && !nextHeadPos.equals(joints.firstElement()))) {
             return false;
         }
 
@@ -64,20 +65,13 @@ public class Snake extends Actor {
         return true;
     }
 
-    public Point2D getHeadPos() {
-        return joints.lastElement();
-    }
+    public Point2D getHeadPos() { return joints.lastElement(); }
 
     public int getLength() { return joints.size(); }
 
-    public boolean isOnPoint(Point2D point) {
-        return joints.contains(point);
-    }
+    public boolean isOnPoint(Point2D point) { return joints.contains(point); }
 
-    private boolean isInBoard(Point2D point, Point2D boardSize) {
-        if (point.x < 0 || point.x >= boardSize.x || point.y < 0 || point.y >= boardSize.y) {
-            return false;
-        }
-        return true;
+    static private boolean isInBoard(Point2D point, Point2D boardSize) {
+        return point.x >= 0 && point.x < boardSize.x && point.y >= 0 && point.y < boardSize.y;
     }
 }
