@@ -115,16 +115,16 @@ public class Board extends JPanel implements ActionListener {
             int keyCode = e.getKeyCode();
             switch (keyCode) {
                 case KeyEvent.VK_UP:
-                    snake.setDirection(Direction.UP);
+                    snake.trySetNextDirection(Direction.UP);
                     break;
                 case KeyEvent.VK_DOWN:
-                    snake.setDirection(Direction.DOWN);
+                    snake.trySetNextDirection(Direction.DOWN);
                     break;
                 case KeyEvent.VK_LEFT:
-                    snake.setDirection(Direction.LEFT);
+                    snake.trySetNextDirection(Direction.LEFT);
                     break;
                 case KeyEvent.VK_RIGHT:
-                    snake.setDirection(Direction.RIGHT);
+                    snake.trySetNextDirection(Direction.RIGHT);
                     break;
                 case KeyEvent.VK_R:
                     if (gameState == GameState.POST_MATCH) {

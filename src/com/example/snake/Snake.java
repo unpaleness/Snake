@@ -3,6 +3,7 @@ package com.example.snake;
 import javax.swing.JPanel;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.util.ArrayDeque;
 import java.util.Vector;
 
 public class Snake extends Actor {
@@ -12,8 +13,8 @@ public class Snake extends Actor {
     static private final String SNAKE_BODY_PATH = "src/resources/snake_body.png";
 
     private final Vector<Point2D> joints;
-    private Direction direction = Direction.UP;
-    private Direction nextDirection = Direction.UP;
+    private Direction currentDirection = Direction.UP;
+    private ArrayDeque<Direction> directionsQueue = new ArrayDeque<>();
     private final Image imageHead;
     private final Image imageBodyJoint;
     private final int cellSize;
@@ -22,7 +23,7 @@ public class Snake extends Actor {
         joints = new Vector<>();
         joints.add(headPos);
         for (int i = 1; i < INITIAL_LENGTH; ++i) {
-            joints.add(direction.nextPoint(joints.lastElement()));
+            joints.add(currentDirection.nextPoint(joints.lastElement()));
         }
 
         cellSize = newCellSize;
@@ -38,16 +39,19 @@ public class Snake extends Actor {
         }
     }
 
-    public void setDirection(Direction newDirection) {
-        if (direction == newDirection.getOpposite()) {
+    public void trySetNextDirection(Direction newDirection) {
+        Direction lastDirection = directionsQueue.isEmpty() ? currentDirection : directionsQueue.peekLast();
+        if (lastDirection == newDirection.getOpposite()) {
             return;
         }
-        nextDirection = newDirection;
+        directionsQueue.offer(newDirection);
     }
 
     public boolean tryMove(Point2D boardSize, Point2D applePos) {
-        Point2D nextHeadPos = nextDirection.nextPoint(joints.lastElement());
-        direction = nextDirection;
+        if (!directionsQueue.isEmpty()) {
+            currentDirection = directionsQueue.poll();
+        }
+        Point2D nextHeadPos = currentDirection.nextPoint(joints.lastElement());
 
         if (!isInBoard(nextHeadPos, boardSize) ||
                 (joints.contains(nextHeadPos) && !nextHeadPos.equals(joints.firstElement()))) {
