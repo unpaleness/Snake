@@ -4,6 +4,8 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -25,6 +27,8 @@ public class Board extends JPanel implements ActionListener {
     private GameState gameState = GameState.IN_MENU;
     private long prepareMatchTimestamp;
     private long previousSnakeStepTimestamp;
+    static private final Font font = new Font("Default", Font.BOLD, 32);
+    private final FontMetrics fontMetrics = getFontMetrics(font);
 
     public Board() {
         setBackground(Color.black);
@@ -47,15 +51,20 @@ public class Board extends JPanel implements ActionListener {
         apple.draw(graphics, this);
 
         if (gameState == GameState.PRE_MATCH) {
-            graphics.setColor(Color.white);
+            graphics.setColor(Color.red);
             long timeToMatchStartMS = prepareMatchTimestamp + PREPARE_TIME_MS - System.currentTimeMillis();
-            graphics.drawString(String.valueOf((int) Math.ceil((float) timeToMatchStartMS / 1000)),
-                             cellsAmount.x * CELL_SIZE / 2, cellsAmount.y * CELL_SIZE / 2);
+            graphics.setFont(font);
+            String msg = String.valueOf((int) Math.ceil((float) timeToMatchStartMS / 1000));
+            graphics.drawString(msg, (cellsAmount.x * CELL_SIZE - fontMetrics.stringWidth(msg)) / 2,
+                             cellsAmount.y * CELL_SIZE / 2);
         }
 
         if (gameState == GameState.POST_MATCH) {
             graphics.setColor(Color.white);
-            graphics.drawString("Game Over, press R to restart", cellsAmount.x * CELL_SIZE / 2, cellsAmount.y * CELL_SIZE / 2);
+            graphics.setFont(font);
+            String msg = "Game Over, press R to restart";
+            graphics.drawString(msg, (cellsAmount.x * CELL_SIZE - fontMetrics.stringWidth(msg)) / 2,
+                             cellsAmount.y * CELL_SIZE / 2);
         }
 
         Toolkit.getDefaultToolkit().sync();
