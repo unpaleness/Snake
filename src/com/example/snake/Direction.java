@@ -1,24 +1,22 @@
 package com.example.snake;
 
 public enum Direction {
-    UP, DOWN, LEFT, RIGHT;
 
-    public Direction getOpposite() {
-        switch (this) {
-            case UP:
-                return DOWN;
-            case DOWN:
-                return UP;
-            case LEFT:
-                return RIGHT;
-            case RIGHT:
-                return LEFT;
-        }
-        return UP;
+    UP(0), LEFT(1), DOWN(2), RIGHT(3);
+    private int value = 0;
+
+    Direction(int newValue) {
+        value = newValue;
+    }
+
+    public int getValue() { return value; }
+
+    public boolean isCollinear(Direction other) {
+        return (value + other.getValue()) % 2 == 0;
     }
 
     public Point2D nextPoint(Point2D point) {
-        Point2D nextPoint = (Point2D) point.clone();
+        Point2D nextPoint = point.clone();
         switch (this) {
             case UP:
                 --nextPoint.y;

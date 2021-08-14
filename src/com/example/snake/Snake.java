@@ -14,7 +14,7 @@ public class Snake extends Actor {
 
     private final Vector<Point2D> joints;
     private Direction currentDirection = Direction.UP;
-    private ArrayDeque<Direction> directionsQueue = new ArrayDeque<>();
+    private final ArrayDeque<Direction> directionsQueue = new ArrayDeque<>();
     private final Image imageHead;
     private final Image imageBodyJoint;
     private final int cellSize;
@@ -41,7 +41,7 @@ public class Snake extends Actor {
 
     public void trySetNextDirection(Direction newDirection) {
         Direction lastDirection = directionsQueue.isEmpty() ? currentDirection : directionsQueue.peekLast();
-        if (lastDirection == newDirection.getOpposite()) {
+        if (lastDirection.isCollinear(newDirection)) {
             return;
         }
         directionsQueue.offer(newDirection);
