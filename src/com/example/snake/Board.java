@@ -8,8 +8,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.Graphics;
 import java.awt.Toolkit;
 
@@ -35,7 +33,7 @@ public class Board extends JPanel implements ActionListener {
         setFocusable(true);
         setPreferredSize(new Dimension(cellsAmount.x * CELL_SIZE, cellsAmount.y * CELL_SIZE));
 
-        addKeyListener(new TAdapter());
+        addKeyListener(new KeyHandler(this));
 
         timer = new Timer(TICK_MS, this);
         timer.start();
@@ -100,7 +98,7 @@ public class Board extends JPanel implements ActionListener {
         repaint();
     }
 
-    private void prepareForMatch() {
+    public void prepareForMatch() {
         prepareMatchTimestamp = System.currentTimeMillis();
         previousSnakeStepTimestamp = System.currentTimeMillis();
 
@@ -113,36 +111,13 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-    private void endMatch() {
-        gameState = GameState.POST_MATCH;
+    public GameState getGameState() { return gameState; }
+
+    public void addNextDirection(Direction nextDirection) {
+        snake.tryAddNextDirection(nextDirection);
     }
 
-    private class TAdapter extends KeyAdapter {
-
-        @Override
-        public void keyPressed(KeyEvent e) {
-            int keyCode = e.getKeyCode();
-            switch (keyCode) {
-                case KeyEvent.VK_UP:
-                    snake.trySetNextDirection(Direction.UP);
-                    break;
-                case KeyEvent.VK_DOWN:
-                    snake.trySetNextDirection(Direction.DOWN);
-                    break;
-                case KeyEvent.VK_LEFT:
-                    snake.trySetNextDirection(Direction.LEFT);
-                    break;
-                case KeyEvent.VK_RIGHT:
-                    snake.trySetNextDirection(Direction.RIGHT);
-                    break;
-                case KeyEvent.VK_R:
-                    if (gameState == GameState.POST_MATCH) {
-                        prepareForMatch();
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
+    private void endMatch() {
+        gameState = GameState.POST_MATCH;
     }
 }

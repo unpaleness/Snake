@@ -39,7 +39,7 @@ public class Snake extends Actor {
         }
     }
 
-    public void trySetNextDirection(Direction newDirection) {
+    public void tryAddNextDirection(Direction newDirection) {
         Direction lastDirection = directionsQueue.isEmpty() ? currentDirection : directionsQueue.peekLast();
         if (lastDirection.isCollinear(newDirection)) {
             return;
