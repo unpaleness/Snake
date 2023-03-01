@@ -49,20 +49,17 @@ public class Board extends JPanel implements ActionListener {
         apple.draw(graphics, this);
 
         if (gameState == GameState.PRE_MATCH) {
-            graphics.setColor(Color.red);
             long timeToMatchStartMS = prepareMatchTimestamp + PREPARE_TIME_MS - System.currentTimeMillis();
-            graphics.setFont(font);
             String msg = String.valueOf((int) Math.ceil((float) timeToMatchStartMS / 1000));
-            graphics.drawString(msg, (cellsAmount.x * CELL_SIZE - fontMetrics.stringWidth(msg)) / 2,
-                             cellsAmount.y * CELL_SIZE / 2);
+            paintText(graphics, msg, Color.red);
+        }
+
+        if (gameState == GameState.PAUSE) {
+            paintText(graphics, "Game paused", Color.white);
         }
 
         if (gameState == GameState.POST_MATCH) {
-            graphics.setColor(Color.white);
-            graphics.setFont(font);
-            String msg = "Game Over, press R to restart";
-            graphics.drawString(msg, (cellsAmount.x * CELL_SIZE - fontMetrics.stringWidth(msg)) / 2,
-                             cellsAmount.y * CELL_SIZE / 2);
+            paintText(graphics, "Game Over, press R to restart", Color.white);
         }
 
         Toolkit.getDefaultToolkit().sync();
@@ -90,8 +87,6 @@ public class Board extends JPanel implements ActionListener {
                     previousSnakeStepTimestamp = currentTimestamp;
                 }
                 break;
-            case POST_MATCH:
-                break;
             default:
                 break;
         }
@@ -111,13 +106,39 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-    public GameState getGameState() { return gameState; }
+    public void tryRestart() {
+        if (gameState == GameState.POST_MATCH) {
+            prepareForMatch();
+        }
+    }
+
+    public void processPause() {
+        switch (gameState) {
+            case IN_PROGRESS:
+                gameState = GameState.PAUSE;
+                break;
+            case PAUSE:
+                gameState = GameState.IN_PROGRESS;
+                break;
+            default:
+                break;
+        }
+    }
 
     public void addNextDirection(Direction nextDirection) {
-        snake.tryAddNextDirection(nextDirection);
+        if (gameState == GameState.IN_PROGRESS) {
+            snake.tryAddNextDirection(nextDirection);
+        }
     }
 
     private void endMatch() {
         gameState = GameState.POST_MATCH;
+    }
+
+    private void paintText(Graphics graphics, String msg, Color color) {
+        graphics.setColor(color);
+        graphics.setFont(font);
+        graphics.drawString(msg, (cellsAmount.x * CELL_SIZE - fontMetrics.stringWidth(msg)) / 2,
+                cellsAmount.y * CELL_SIZE / 2);
     }
 }

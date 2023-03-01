@@ -27,10 +27,11 @@ public class KeyHandler extends KeyAdapter {
             case KeyEvent.VK_RIGHT:
                 board.addNextDirection(Direction.RIGHT);
                 break;
+            case KeyEvent.VK_P:
+                board.processPause();
+                break;
             case KeyEvent.VK_R:
-                if (board.getGameState() == GameState.POST_MATCH) {
-                    board.prepareForMatch();
-                }
+                board.tryRestart();
                 break;
             default:
                 break;
